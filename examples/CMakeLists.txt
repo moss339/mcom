@@ -1,0 +1,5 @@
+add_executable(example_action_server example_action_server.cpp)
+target_link_libraries(example_action_server maction pthread)
+
+add_executable(example_action_client example_action_client.cpp)
+target_link_libraries(example_action_client maction pthread)

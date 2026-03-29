@@ -1,7 +1,0 @@
-/mnt/data/workspace/moss/mcom/build/CMakeFiles/mcom.dir
-/mnt/data/workspace/moss/mcom/build/CMakeFiles/edit_cache.dir
-/mnt/data/workspace/moss/mcom/build/CMakeFiles/rebuild_cache.dir
-/mnt/data/workspace/moss/mcom/build/CMakeFiles/list_install_components.dir
-/mnt/data/workspace/moss/mcom/build/CMakeFiles/install.dir
-/mnt/data/workspace/moss/mcom/build/CMakeFiles/install/local.dir
-/mnt/data/workspace/moss/mcom/build/CMakeFiles/install/strip.dir

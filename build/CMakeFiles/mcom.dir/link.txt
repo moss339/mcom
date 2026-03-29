@@ -1,2 +1,0 @@
-/usr/bin/ar qc libmcom.a CMakeFiles/mcom.dir/src/topic/topic_manager.cpp.o CMakeFiles/mcom.dir/src/service/service_manager.cpp.o CMakeFiles/mcom.dir/src/action/action_client.cpp.o CMakeFiles/mcom.dir/src/action/action_server.cpp.o CMakeFiles/mcom.dir/src/action/goal_handle.cpp.o CMakeFiles/mcom.dir/src/node/node.cpp.o
-/usr/bin/ranlib libmcom.a

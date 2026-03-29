@@ -32,10 +32,15 @@ set(ACTION_SOURCES
     src/action/goal_handle.cpp
 )
 
+set(NODE_SOURCES
+    src/node/node.cpp
+)
+
 add_library(mcom STATIC
     ${TOPIC_SOURCES}
     ${SERVICE_SOURCES}
     ${ACTION_SOURCES}
+    ${NODE_SOURCES}
 )
 
 target_link_libraries(mcom

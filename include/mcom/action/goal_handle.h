@@ -1,11 +1,12 @@
-#ifndef MACTION_GOAL_HANDLE_H
-#define MACTION_GOAL_HANDLE_H
+#ifndef MCOM_GOAL_HANDLE_H
+#define MCOM_GOAL_HANDLE_H
 
 #include "types.h"
 #include <atomic>
 #include <mutex>
 
-namespace maction {
+namespace mcom {
+namespace action {
 
 class GoalHandle {
 public:
@@ -42,6 +43,7 @@ private:
     mutable std::mutex result_mutex_;
 };
 
-}  // namespace maction
+}  // namespace action
+}  // namespace mcom
 
-#endif  // MACTION_GOAL_HANDLE_H
+#endif  // MCOM_GOAL_HANDLE_H

@@ -1,10 +1,9 @@
-#ifndef MACTION_H
-#define MACTION_H
+#ifndef MCOM_ACTION_H
+#define MCOM_ACTION_H
 
 #include "types.h"
-#include "error.h"
 #include "goal_handle.h"
 #include "action_client.h"
 #include "action_server.h"
 
-#endif  // MACTION_H
+#endif  // MCOM_ACTION_H

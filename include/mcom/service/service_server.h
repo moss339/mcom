@@ -1,11 +1,12 @@
-#ifndef MSERVICE_SERVICE_SERVER_H
-#define MSERVICE_SERVICE_SERVER_H
+#ifndef MCOM_SERVICE_SERVER_H
+#define MCOM_SERVICE_SERVER_H
 
 #include "types.h"
 #include <memory>
 #include <map>
 
-namespace mservice {
+namespace mcom {
+namespace service {
 
 class ServiceServer : public std::enable_shared_from_this<ServiceServer> {
 public:
@@ -32,6 +33,9 @@ private:
     bool offered_;
 };
 
-}  // namespace mservice
+using ServiceServerPtr = std::shared_ptr<ServiceServer>;
 
-#endif  // MSERVICE_SERVICE_SERVER_H
+}  // namespace service
+}  // namespace mcom
+
+#endif  // MCOM_SERVICE_SERVER_H

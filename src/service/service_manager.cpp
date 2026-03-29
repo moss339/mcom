@@ -1,6 +1,7 @@
-#include "mservice/service_manager.h"
+#include "mcom/service/service_manager.h"
 
-namespace mservice {
+namespace mcom {
+namespace service {
 
 ServiceManager& ServiceManager::instance() {
     static ServiceManager instance;
@@ -11,4 +12,5 @@ SessionId ServiceManager::generate_session_id() {
     return next_session_id_++;
 }
 
-}  // namespace mservice
+}  // namespace service
+}  // namespace mcom

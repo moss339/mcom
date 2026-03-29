@@ -1,5 +1,5 @@
-#ifndef MACTION_TYPES_H
-#define MACTION_TYPES_H
+#ifndef MCOM_ACTION_TYPES_H
+#define MCOM_ACTION_TYPES_H
 
 #include <cstdint>
 #include <vector>
@@ -8,7 +8,8 @@
 #include <optional>
 #include <future>
 
-namespace maction {
+namespace mcom {
+namespace action {
 
 enum class ActionStatus : uint8_t {
     READY = 0x00,
@@ -58,6 +59,7 @@ using GoalHandler = std::function<std::tuple<bool, ActionStatus, std::vector<uin
 using FeedbackHandler = std::function<void(const FeedbackInfo& feedback)>;
 using CancelHandler = std::function<bool(uint32_t goal_id)>;
 
-}  // namespace maction
+}  // namespace action
+}  // namespace mcom
 
-#endif  // MACTION_TYPES_H
+#endif  // MCOM_ACTION_TYPES_H

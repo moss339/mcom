@@ -1,5 +1,5 @@
-#ifndef MACTION_ACTION_SERVER_H
-#define MACTION_ACTION_SERVER_H
+#ifndef MCOM_ACTION_SERVER_H
+#define MCOM_ACTION_SERVER_H
 
 #include "types.h"
 #include "goal_handle.h"
@@ -8,16 +8,12 @@
 #include <mutex>
 #include <atomic>
 
-namespace msomeip {
-class Application;
-}
-
-namespace maction {
+namespace mcom {
+namespace action {
 
 class ActionServer : public std::enable_shared_from_this<ActionServer> {
 public:
-    ActionServer(std::shared_ptr<msomeip::Application> app,
-                 ActionServerConfig config);
+    ActionServer(ActionServerConfig config);
     ~ActionServer();
 
     ActionServer(const ActionServer&) = delete;
@@ -44,7 +40,6 @@ public:
     void on_cancel_goal(uint32_t goal_id);
 
 private:
-    std::shared_ptr<msomeip::Application> app_;
     ActionServerConfig config_;
     std::atomic<bool> initialized_{false};
     std::atomic<bool> running_{false};
@@ -60,6 +55,9 @@ private:
     std::mutex goal_id_mutex_;
 };
 
-}  // namespace maction
+using ActionServerPtr = std::shared_ptr<ActionServer>;
 
-#endif  // MACTION_ACTION_SERVER_H
+}  // namespace action
+}  // namespace mcom
+
+#endif  // MCOM_ACTION_SERVER_H

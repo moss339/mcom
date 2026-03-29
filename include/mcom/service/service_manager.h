@@ -1,12 +1,13 @@
-#ifndef MSERVICE_SERVICE_MANAGER_H
-#define MSERVICE_SERVICE_MANAGER_H
+#ifndef MCOM_SERVICE_MANAGER_H
+#define MCOM_SERVICE_MANAGER_H
 
 #include "types.h"
 #include <map>
 #include <mutex>
 #include <shared_mutex>
 
-namespace mservice {
+namespace mcom {
+namespace service {
 
 class ServiceManager {
 public:
@@ -20,6 +21,7 @@ private:
     SessionId next_session_id_;
 };
 
-}  // namespace mservice
+}  // namespace service
+}  // namespace mcom
 
-#endif  // MSERVICE_SERVICE_MANAGER_H
+#endif  // MCOM_SERVICE_MANAGER_H

@@ -1,12 +1,13 @@
-#ifndef MSERVICE_SERVICE_CLIENT_H
-#define MSERVICE_SERVICE_CLIENT_H
+#ifndef MCOM_SERVICE_CLIENT_H
+#define MCOM_SERVICE_CLIENT_H
 
 #include "types.h"
 #include <memory>
 #include <chrono>
 #include <future>
 
-namespace mservice {
+namespace mcom {
+namespace service {
 
 class ServiceClient : public std::enable_shared_from_this<ServiceClient> {
 public:
@@ -39,6 +40,9 @@ private:
     bool initialized_;
 };
 
-}  // namespace mservice
+using ServiceClientPtr = std::shared_ptr<ServiceClient>;
 
-#endif  // MSERVICE_SERVICE_CLIENT_H
+}  // namespace service
+}  // namespace mcom
+
+#endif  // MCOM_SERVICE_CLIENT_H

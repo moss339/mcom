@@ -1,7 +1,8 @@
-#include "maction/goal_handle.h"
+#include "mcom/action/goal_handle.h"
 #include <stdexcept>
 
-namespace maction {
+namespace mcom {
+namespace action {
 
 GoalHandle::GoalHandle(uint32_t goal_id)
     : goal_id_(goal_id), status_(ActionStatus::READY) {
@@ -35,4 +36,5 @@ ResultInfo GoalHandle::get_result() const {
     return result_info_;
 }
 
-}  // namespace maction
+}  // namespace action
+}  // namespace mcom

@@ -10,8 +10,9 @@ find_package(Threads REQUIRED)
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/mshm/include
-    ${CMAKE_SOURCE_DIR}/mdds/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../mshm/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../mdds/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../msomeip/include
 )
 
 # Source files
@@ -24,7 +25,9 @@ set(SERVICE_SOURCES
 )
 
 set(ACTION_SOURCES
-    src/action/action_manager.cpp
+    src/action/action_client.cpp
+    src/action/action_server.cpp
+    src/action/goal_handle.cpp
 )
 
 set(NODE_SOURCES

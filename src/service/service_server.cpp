@@ -1,6 +1,7 @@
-#include "mservice/service_server.h"
+#include "mcom/service/service_server.h"
 
-namespace mservice {
+namespace mcom {
+namespace service {
 
 ServiceServer::ServiceServer(ServiceId service_id, InstanceId instance_id)
     : service_id_(service_id),
@@ -56,4 +57,5 @@ InstanceId ServiceServer::get_instance_id() const {
     return instance_id_;
 }
 
-}  // namespace mservice
+}  // namespace service
+}  // namespace mcom

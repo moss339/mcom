@@ -1,8 +1,9 @@
-#include "mservice/service_client.h"
-#include "mservice/service_manager.h"
+#include "mcom/service/service_client.h"
+#include "mcom/service/service_manager.h"
 #include <chrono>
 
-namespace mservice {
+namespace mcom {
+namespace service {
 
 ServiceClient::ServiceClient(ServiceId service_id, InstanceId instance_id)
     : service_id_(service_id),
@@ -62,4 +63,5 @@ InstanceId ServiceClient::get_instance_id() const {
     return instance_id_;
 }
 
-}  // namespace mservice
+}  // namespace service
+}  // namespace mcom

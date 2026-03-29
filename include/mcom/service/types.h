@@ -1,5 +1,5 @@
-#ifndef MSERVICE_TYPES_H
-#define MSERVICE_TYPES_H
+#ifndef MCOM_SERVICE_TYPES_H
+#define MCOM_SERVICE_TYPES_H
 
 #include <cstdint>
 #include <vector>
@@ -7,7 +7,8 @@
 #include <optional>
 #include <future>
 
-namespace mservice {
+namespace mcom {
+namespace service {
 
 enum class ServiceError : uint8_t {
     OK = 0x00,
@@ -64,6 +65,7 @@ struct Response {
 
 using RequestHandler = std::function<Response(const Request& request)>;
 
-}  // namespace mservice
+}  // namespace service
+}  // namespace mcom
 
-#endif  // MSERVICE_TYPES_H
+#endif  // MCOM_SERVICE_TYPES_H

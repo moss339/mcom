@@ -6,6 +6,8 @@
 #include <functional>
 #include <optional>
 #include <future>
+#include <string>
+#include <cstring>
 
 namespace mcom {
 namespace service {
@@ -55,15 +57,103 @@ struct ResponseHeader {
 struct Request {
     RequestHeader header;
     std::vector<uint8_t> payload;
+
+    std::vector<uint8_t> serialize() const {
+        std::vector<uint8_t> buffer;
+        size_t total_size = sizeof(RequestHeader) + sizeof(size_t) + payload.size();
+        buffer.resize(total_size);
+        size_t offset = 0;
+        std::memcpy(buffer.data() + offset, &header, sizeof(RequestHeader));
+        offset += sizeof(RequestHeader);
+        size_t payload_size = payload.size();
+        std::memcpy(buffer.data() + offset, &payload_size, sizeof(size_t));
+        offset += sizeof(size_t);
+        if (!payload.empty()) {
+            std::memcpy(buffer.data() + offset, payload.data(), payload.size());
+        }
+        return buffer;
+    }
+
+    static Request deserialize(const uint8_t* buffer, size_t size) {
+        Request req;
+        size_t offset = 0;
+        if (offset + sizeof(RequestHeader) > size) return req;
+        std::memcpy(&req.header, buffer + offset, sizeof(RequestHeader));
+        offset += sizeof(RequestHeader);
+        if (offset + sizeof(size_t) > size) return req;
+        size_t payload_size;
+        std::memcpy(&payload_size, buffer + offset, sizeof(size_t));
+        offset += sizeof(size_t);
+        if (offset + payload_size > size) return req;
+        req.payload.resize(payload_size);
+        if (payload_size > 0) {
+            std::memcpy(req.payload.data(), buffer + offset, payload_size);
+        }
+        return req;
+    }
 };
 
 struct Response {
     ResponseHeader header;
     ServiceError error;
     std::vector<uint8_t> payload;
+
+    std::vector<uint8_t> serialize() const {
+        std::vector<uint8_t> buffer;
+        size_t total_size = sizeof(ResponseHeader) + sizeof(ServiceError) + sizeof(size_t) + payload.size();
+        buffer.resize(total_size);
+        size_t offset = 0;
+        std::memcpy(buffer.data() + offset, &header, sizeof(ResponseHeader));
+        offset += sizeof(ResponseHeader);
+        std::memcpy(buffer.data() + offset, &error, sizeof(ServiceError));
+        offset += sizeof(ServiceError);
+        size_t payload_size = payload.size();
+        std::memcpy(buffer.data() + offset, &payload_size, sizeof(size_t));
+        offset += sizeof(size_t);
+        if (!payload.empty()) {
+            std::memcpy(buffer.data() + offset, payload.data(), payload.size());
+        }
+        return buffer;
+    }
+
+    static Response deserialize(const uint8_t* buffer, size_t size) {
+        Response resp;
+        size_t offset = 0;
+        if (offset + sizeof(ResponseHeader) > size) return resp;
+        std::memcpy(&resp.header, buffer + offset, sizeof(ResponseHeader));
+        offset += sizeof(ResponseHeader);
+        if (offset + sizeof(ServiceError) > size) return resp;
+        std::memcpy(&resp.error, buffer + offset, sizeof(ServiceError));
+        offset += sizeof(ServiceError);
+        if (offset + sizeof(size_t) > size) return resp;
+        size_t payload_size;
+        std::memcpy(&payload_size, buffer + offset, sizeof(size_t));
+        offset += sizeof(size_t);
+        if (offset + payload_size > size) return resp;
+        resp.payload.resize(payload_size);
+        if (payload_size > 0) {
+            std::memcpy(resp.payload.data(), buffer + offset, payload_size);
+        }
+        return resp;
+    }
 };
 
 using RequestHandler = std::function<Response(const Request& request)>;
+
+struct ServiceMessage {
+    std::vector<uint8_t> serialize() const {
+        return data_;
+    }
+
+    static ServiceMessage deserialize(const uint8_t* buffer, size_t size) {
+        ServiceMessage msg;
+        msg.data_.resize(size);
+        std::memcpy(msg.data_.data(), buffer, size);
+        return msg;
+    }
+
+    std::vector<uint8_t> data_;
+};
 
 }  // namespace service
 }  // namespace mcom

@@ -3,7 +3,10 @@
 namespace mcom {
 namespace topic {
 
-// Implementation placeholder
+TopicManager& TopicManager::instance() {
+    static TopicManager instance;
+    return instance;
+}
 
 } // namespace topic
 } // namespace mcom

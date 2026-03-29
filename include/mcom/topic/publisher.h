@@ -1,26 +1,51 @@
 #pragma once
 #include <string>
-#include <vector>
 #include <memory>
+#include "mcom/types.h"
+#include "mdds/publisher.h"
 
 namespace mcom {
 namespace topic {
 
-class Publisher {
+template<typename T>
+class Publisher : public std::enable_shared_from_this<Publisher<T>> {
 public:
+    using DataType = T;
+
     Publisher() = default;
-    virtual ~Publisher() = default;
-    
-    virtual void publish(const void* data, size_t size) = 0;
-    virtual void publish(const void* data, size_t size, uint64_t timestamp) = 0;
-    
+
+    Publisher(std::shared_ptr<mdds::Publisher<T>> inner)
+        : inner_(std::move(inner)) {
+        if (inner_) {
+            topic_name_ = inner_->get_topic_name();
+        }
+    }
+
+    ~Publisher() = default;
+
+    void publish(const T& data) {
+        if (inner_) {
+            inner_->write(data);
+        }
+    }
+
+    void publish(const T& data, uint64_t timestamp) {
+        if (inner_) {
+            inner_->write(data, timestamp);
+        }
+    }
+
     const std::string& get_topic_name() const { return topic_name_; }
-    
-protected:
+
+    std::shared_ptr<mdds::Publisher<T>> get_inner() const { return inner_; }
+
+private:
+    std::shared_ptr<mdds::Publisher<T>> inner_;
     std::string topic_name_;
 };
 
-using PublisherPtr = std::shared_ptr<Publisher>;
+template<typename T>
+using PublisherPtr = std::shared_ptr<Publisher<T>>;
 
 } // namespace topic
 } // namespace mcom

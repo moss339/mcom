@@ -8,7 +8,6 @@
 #include "action/action_client.h"
 #include "action/action_server.h"
 #include "action/goal_handle.h"
-#include "node/node.h"
 
 namespace mcom {
 

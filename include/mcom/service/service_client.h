@@ -3,8 +3,11 @@
 
 #include "types.h"
 #include <memory>
+#include <map>
 #include <chrono>
 #include <future>
+#include <mutex>
+#include "mcom/topic/topic_manager.h"
 
 namespace mcom {
 namespace service {
@@ -35,9 +38,17 @@ public:
     InstanceId get_instance_id() const;
 
 private:
+    std::string get_request_topic() const;
+    std::string get_response_topic() const;
+    void handle_response(const Response& response);
+
     ServiceId service_id_;
     InstanceId instance_id_;
     bool initialized_;
+
+    using PendingRequest = std::promise<std::optional<Response>>;
+    std::map<SessionId, PendingRequest> pending_requests_;
+    std::mutex pending_mutex_;
 };
 
 using ServiceClientPtr = std::shared_ptr<ServiceClient>;

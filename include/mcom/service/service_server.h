@@ -4,6 +4,8 @@
 #include "types.h"
 #include <memory>
 #include <map>
+#include <mutex>
+#include "mcom/topic/topic_manager.h"
 
 namespace mcom {
 namespace service {
@@ -27,10 +29,15 @@ public:
     InstanceId get_instance_id() const;
 
 private:
+    std::string get_request_topic() const;
+    std::string get_response_topic() const;
+    void handle_request(const Request& request);
+
     ServiceId service_id_;
     InstanceId instance_id_;
     std::map<MethodId, RequestHandler> handlers_;
     bool offered_;
+    std::mutex handlers_mutex_;
 };
 
 using ServiceServerPtr = std::shared_ptr<ServiceServer>;

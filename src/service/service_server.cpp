@@ -1,5 +1,7 @@
 #include "mcom/service/service_server.h"
+#include <mdds/mdds.h>
 
+namespace moss {
 namespace mcom {
 namespace service {
 
@@ -140,3 +142,5 @@ InstanceId ServiceServer::get_instance_id() const {
 
 }  // namespace service
 }  // namespace mcom
+
+}  // namespace moss

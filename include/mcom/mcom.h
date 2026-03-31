@@ -10,8 +10,10 @@
 #include "action/goal_handle.h"
 #include "node/node.h"
 
+namespace moss {
 namespace mcom {
 
 constexpr const char* VERSION = "0.1.0";
 
-} // namespace mcom
+}  // namespace mcom
+}  // namespace moss

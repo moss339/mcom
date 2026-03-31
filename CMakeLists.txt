@@ -1,4 +1,7 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.14)
+
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
 project(mcom VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -7,12 +10,29 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Find dependencies
 find_package(Threads REQUIRED)
 
+# Use local mshm and mdds builds directly
+set(mshm_ROOT "/mnt/data/workspace/moss/mshm" CACHE PATH "mshm root")
+set(mdds_ROOT "/mnt/data/workspace/moss/mdds" CACHE PATH "mdds root")
+
+# Import mshm library
+add_library(mshm::mshm SHARED IMPORTED)
+set_target_properties(mshm::mshm PROPERTIES
+    IMPORTED_LOCATION "${mshm_ROOT}/build/src/libmshm.so"
+    INTERFACE_INCLUDE_DIRECTORIES "${mshm_ROOT}/include"
+)
+
+# Import mdds library
+add_library(mdds::mdds SHARED IMPORTED)
+set_target_properties(mdds::mdds PROPERTIES
+    IMPORTED_LOCATION "${mdds_ROOT}/build/src/libmdds.so"
+    INTERFACE_INCLUDE_DIRECTORIES "${mdds_ROOT}/include"
+)
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../mshm/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../mdds/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../msomeip/include
+    ${mshm_ROOT}/include
+    ${mdds_ROOT}/include
 )
 
 # Source files
@@ -36,17 +56,35 @@ set(NODE_SOURCES
     src/node/node.cpp
 )
 
-add_library(mcom STATIC
-    ${TOPIC_SOURCES}
-    ${SERVICE_SOURCES}
-    ${ACTION_SOURCES}
-    ${NODE_SOURCES}
-)
+if(BUILD_SHARED_LIBS)
+    add_library(mcom SHARED
+        ${TOPIC_SOURCES}
+        ${SERVICE_SOURCES}
+        ${ACTION_SOURCES}
+        ${NODE_SOURCES}
+    )
+    set_target_properties(mcom PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION 1
+        POSITION_INDEPENDENT_CODE ON
+    )
+else()
+    add_library(mcom STATIC
+        ${TOPIC_SOURCES}
+        ${SERVICE_SOURCES}
+        ${ACTION_SOURCES}
+        ${NODE_SOURCES}
+    )
+    set_target_properties(mcom PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION 1
+    )
+endif()
 
 target_link_libraries(mcom
     Threads::Threads
-    mshm
-    mdds
+    mshm::mshm
+    mdds::mdds
 )
 
 target_include_directories(mcom PUBLIC
@@ -55,9 +93,15 @@ target_include_directories(mcom PUBLIC
 )
 
 install(TARGETS mcom
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 install(DIRECTORY include/ DESTINATION include)
+
+# Examples
+option(MCOM_BUILD_EXAMPLES "Build mcom examples" OFF)
+if(MCOM_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()

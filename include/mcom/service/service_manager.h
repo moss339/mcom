@@ -6,6 +6,7 @@
 #include <mutex>
 #include <shared_mutex>
 
+namespace moss {
 namespace mcom {
 namespace service {
 
@@ -24,4 +25,5 @@ private:
 }  // namespace service
 }  // namespace mcom
 
+}  // namespace moss
 #endif  // MCOM_SERVICE_MANAGER_H

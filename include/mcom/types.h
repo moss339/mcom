@@ -6,6 +6,7 @@
 #include <functional>
 #include <optional>
 
+namespace moss {
 namespace mcom {
 
 using ServiceId = uint16_t;
@@ -23,4 +24,5 @@ enum class McomError : uint8_t {
     CANCELED = 0x05,
 };
 
-} // namespace mcom
+}  // namespace mcom
+}  // namespace moss

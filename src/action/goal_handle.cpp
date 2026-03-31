@@ -1,6 +1,7 @@
 #include "mcom/action/goal_handle.h"
 #include <stdexcept>
 
+namespace moss {
 namespace mcom {
 namespace action {
 
@@ -38,3 +39,5 @@ ResultInfo GoalHandle::get_result() const {
 
 }  // namespace action
 }  // namespace mcom
+
+}  // namespace moss

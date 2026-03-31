@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 
+namespace moss {
 namespace mcom {
 
 enum class NodeState {
@@ -43,4 +44,5 @@ inline const char* to_string(NodeState state) {
 
 }  // namespace mcom
 
+}  // namespace moss
 #endif  // MCOM_NODE_STATE_H

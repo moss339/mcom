@@ -17,6 +17,7 @@
 #include <google/protobuf/message.h>
 #include "mcom/types.h"
 
+namespace moss {
 namespace mcom {
 namespace topic {
 
@@ -123,4 +124,5 @@ template<typename T>
 using ProtoPublisherPtr = std::shared_ptr<ProtoPublisher<T>>;
 
 } // namespace topic
-} // namespace mcom
+}  // namespace mcom
+}  // namespace moss

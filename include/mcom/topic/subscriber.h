@@ -3,8 +3,9 @@
 #include <memory>
 #include <functional>
 #include "mcom/types.h"
-#include "mdds/subscriber.h"
+#include "mcom/topic/subscriber_impl.h"
 
+namespace moss {
 namespace mcom {
 namespace topic {
 
@@ -16,47 +17,29 @@ public:
 
     Subscriber() = default;
 
-    Subscriber(std::shared_ptr<mdds::Subscriber<T>> inner)
-        : inner_(std::move(inner)) {
-        if (inner_) {
-            topic_name_ = inner_->get_topic_name();
+    explicit Subscriber(std::shared_ptr<SubscriberImpl<T>> impl)
+        : impl_(std::move(impl)) {
+        if (impl_) {
+            topic_name_ = impl_->get_topic_name();
         }
     }
 
     ~Subscriber() = default;
 
-    void subscribe() {
-    }
+    void subscribe();
+    void unsubscribe();
 
-    void unsubscribe() {
-    }
+    void set_callback(DataCallback callback);
 
-    void set_callback(DataCallback callback) {
-        callback_ = std::move(callback);
-        if (inner_) {
-            inner_->set_callback(
-                [this](const T& data, uint64_t timestamp) {
-                    if (callback_) {
-                        callback_(data, timestamp);
-                    }
-                });
-        }
-    }
+    bool read(T& data, uint64_t* timestamp = nullptr);
+    bool has_data() const;
 
-    bool read(T& data, uint64_t* timestamp = nullptr) {
-        return inner_ ? inner_->read(data, timestamp) : false;
-    }
+    const std::string& get_topic_name() const;
 
-    bool has_data() const {
-        return inner_ ? inner_->has_data() : false;
-    }
-
-    const std::string& get_topic_name() const { return topic_name_; }
-
-    std::shared_ptr<mdds::Subscriber<T>> get_inner() const { return inner_; }
+    explicit operator bool() const { return impl_ != nullptr; }
 
 private:
-    std::shared_ptr<mdds::Subscriber<T>> inner_;
+    std::shared_ptr<SubscriberImpl<T>> impl_;
     std::string topic_name_;
     DataCallback callback_;
 };
@@ -65,4 +48,5 @@ template<typename T>
 using SubscriberPtr = std::shared_ptr<Subscriber<T>>;
 
 } // namespace topic
-} // namespace mcom
+}  // namespace mcom
+}  // namespace moss

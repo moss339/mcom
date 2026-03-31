@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+namespace moss {
 namespace mcom {
 
 struct NodeConfig {
@@ -20,4 +21,5 @@ struct NodeConfig {
 
 }  // namespace mcom
 
+}  // namespace moss
 #endif  // MCOM_NODE_CONFIG_H

@@ -9,6 +9,7 @@
 #include <atomic>
 #include <thread>
 
+namespace moss {
 namespace mcom {
 namespace action {
 
@@ -61,4 +62,5 @@ using ActionClientPtr = std::shared_ptr<ActionClient>;
 }  // namespace action
 }  // namespace mcom
 
+}  // namespace moss
 #endif  // MCOM_ACTION_CLIENT_H

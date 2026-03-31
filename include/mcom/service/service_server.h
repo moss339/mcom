@@ -7,6 +7,7 @@
 #include <mutex>
 #include "mcom/topic/topic_manager.h"
 
+namespace moss {
 namespace mcom {
 namespace service {
 
@@ -45,4 +46,5 @@ using ServiceServerPtr = std::shared_ptr<ServiceServer>;
 }  // namespace service
 }  // namespace mcom
 
+}  // namespace moss
 #endif  // MCOM_SERVICE_SERVER_H

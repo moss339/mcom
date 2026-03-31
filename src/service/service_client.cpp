@@ -1,7 +1,9 @@
 #include "mcom/service/service_client.h"
 #include "mcom/service/service_manager.h"
+#include <mdds/mdds.h>
 #include <chrono>
 
+namespace moss {
 namespace mcom {
 namespace service {
 
@@ -144,3 +146,5 @@ InstanceId ServiceClient::get_instance_id() const {
 
 }  // namespace service
 }  // namespace mcom
+
+}  // namespace moss

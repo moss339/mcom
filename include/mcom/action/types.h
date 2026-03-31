@@ -8,6 +8,7 @@
 #include <optional>
 #include <future>
 
+namespace moss {
 namespace mcom {
 namespace action {
 
@@ -62,4 +63,5 @@ using CancelHandler = std::function<bool(uint32_t goal_id)>;
 }  // namespace action
 }  // namespace mcom
 
+}  // namespace moss
 #endif  // MCOM_ACTION_TYPES_H

@@ -9,6 +9,7 @@
 #include <string>
 #include <cstring>
 
+namespace moss {
 namespace mcom {
 namespace service {
 
@@ -158,4 +159,5 @@ struct ServiceMessage {
 }  // namespace service
 }  // namespace mcom
 
+}  // namespace moss
 #endif  // MCOM_SERVICE_TYPES_H

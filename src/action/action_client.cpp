@@ -1,6 +1,7 @@
 #include "mcom/action/action_client.h"
 #include <iostream>
 
+namespace moss {
 namespace mcom {
 namespace action {
 
@@ -102,3 +103,5 @@ void ActionClient::on_feedback(uint32_t goal_id, float progress,
 
 }  // namespace action
 }  // namespace mcom
+
+}  // namespace moss

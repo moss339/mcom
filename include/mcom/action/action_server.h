@@ -8,6 +8,7 @@
 #include <mutex>
 #include <atomic>
 
+namespace moss {
 namespace mcom {
 namespace action {
 
@@ -60,4 +61,5 @@ using ActionServerPtr = std::shared_ptr<ActionServer>;
 }  // namespace action
 }  // namespace mcom
 
+}  // namespace moss
 #endif  // MCOM_ACTION_SERVER_H

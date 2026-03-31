@@ -5,6 +5,7 @@
 #include <atomic>
 #include <mutex>
 
+namespace moss {
 namespace mcom {
 namespace action {
 
@@ -46,4 +47,5 @@ private:
 }  // namespace action
 }  // namespace mcom
 
+}  // namespace moss
 #endif  // MCOM_GOAL_HANDLE_H

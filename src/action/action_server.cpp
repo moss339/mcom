@@ -1,6 +1,7 @@
 #include "mcom/action/action_server.h"
 #include <iostream>
 
+namespace moss {
 namespace mcom {
 namespace action {
 
@@ -127,3 +128,5 @@ void ActionServer::on_cancel_goal(uint32_t goal_id) {
 
 }  // namespace action
 }  // namespace mcom
+
+}  // namespace moss

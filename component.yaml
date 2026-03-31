@@ -1,0 +1,16 @@
+name: mcom
+description: MOSS Unified Communication Middleware
+
+source:
+  root: .
+
+dependencies:
+  local:
+    - mdds
+    - mshm
+
+build:
+  type: library
+  cmake_options:
+    CMAKE_BUILD_TYPE: Release
+    MCOM_BUILD_EXAMPLES: OFF

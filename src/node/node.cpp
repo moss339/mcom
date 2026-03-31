@@ -1,9 +1,11 @@
 #include "mcom/node/node.h"
+#include <mdds/mdds.h>
 #include <mcom/service/service_client.h>
 #include <mcom/service/service_server.h>
 #include <mcom/action/action_client.h>
 #include <mcom/action/action_server.h>
 
+namespace moss {
 namespace mcom {
 
 NodeStateException::NodeStateException(NodeState current, NodeState expected)
@@ -22,7 +24,7 @@ Node::~Node() {
     }
 }
 
-std::shared_ptr<Node> Node::create(const std::string& node_name, mdds::DomainId domain_id) {
+std::shared_ptr<Node> Node::create(const std::string& node_name, uint8_t domain_id) {
     NodeConfig config;
     config.node_name = node_name;
     config.domain_id = domain_id;
@@ -36,7 +38,7 @@ bool Node::init() {
         return false;
     }
 
-    participant_ = mdds::DomainParticipant::create(config_.domain_id);
+    participant_ = moss::mdds::DomainParticipant::create(config_.domain_id);
     if (!participant_) {
         return false;
     }
@@ -100,7 +102,7 @@ const std::string& Node::get_name() const {
     return config_.node_name;
 }
 
-mdds::DomainId Node::get_domain_id() const {
+uint8_t Node::get_domain_id() const {
     return config_.domain_id;
 }
 
@@ -126,4 +128,25 @@ action::ActionServerPtr Node::create_action_server(action::ActionServerConfig co
     return std::make_shared<action::ActionServer>(config);
 }
 
+// Template implementations - require full mdds definitions
+template<typename T>
+std::shared_ptr<moss::mdds::Publisher<T>> Node::create_publisher(
+    const std::string& topic_name, const mdds::QoSConfig& qos) {
+
+    std::lock_guard<std::mutex> lock(endpoints_mutex_);
+    return participant_->create_publisher<T>(topic_name, qos);
+}
+
+template<typename T>
+std::shared_ptr<moss::mdds::Subscriber<T>> Node::create_subscriber(
+    const std::string& topic_name,
+    typename moss::mdds::Subscriber<T>::DataCallback callback,
+    const mdds::QoSConfig& qos) {
+
+    std::lock_guard<std::mutex> lock(endpoints_mutex_);
+    return participant_->create_subscriber<T>(topic_name, std::move(callback), qos);
+}
+
 }  // namespace mcom
+
+}  // namespace moss

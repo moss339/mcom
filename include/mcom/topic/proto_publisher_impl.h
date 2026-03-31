@@ -14,6 +14,7 @@
 #include <cstring>
 #include <google/protobuf/message.h>
 
+namespace moss {
 namespace mcom {
 namespace topic {
 
@@ -57,7 +58,7 @@ public:
     /**
      * @brief 构造（绑定 mdds DataWriter）
      */
-    explicit ProtoPublisherImpl(std::shared_ptr<mdds::DataWriterRaw> writer,
+    explicit ProtoPublisherImpl(std::shared_ptr<moss::mdds::DataWriterRaw> writer,
                                 const std::string& topic_name)
         : writer_(std::move(writer))
         , topic_name_(topic_name) {}
@@ -88,12 +89,13 @@ public:
     }
 
     const std::string& get_topic_name() const { return topic_name_; }
-    std::shared_ptr<mdds::DataWriterRaw> get_writer() const { return writer_; }
+    std::shared_ptr<moss::mdds::DataWriterRaw> get_writer() const { return writer_; }
 
 private:
-    std::shared_ptr<mdds::DataWriterRaw> writer_;
+    std::shared_ptr<moss::mdds::DataWriterRaw> writer_;
     std::string topic_name_;
 };
 
 } // namespace topic
-} // namespace mcom
+}  // namespace mcom
+}  // namespace moss

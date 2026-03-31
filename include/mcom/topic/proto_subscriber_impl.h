@@ -23,6 +23,7 @@ class Transport;
 }
 class QoSConfig;
 
+namespace moss {
 namespace mcom {
 namespace topic {
 
@@ -37,7 +38,7 @@ public:
      */
     using RawCallback = std::function<void(const uint8_t* data, size_t size, uint64_t timestamp_us)>;
 
-    explicit ProtoSubscriberImpl(std::shared_ptr<mdds::DataReaderRaw> reader,
+    explicit ProtoSubscriberImpl(std::shared_ptr<moss::mdds::DataReaderRaw> reader,
                                  const std::string& topic_name)
         : reader_(std::move(reader))
         , topic_name_(topic_name) {}
@@ -125,7 +126,7 @@ private:
         }
     }
 
-    std::shared_ptr<mdds::DataReaderRaw> reader_;
+    std::shared_ptr<moss::mdds::DataReaderRaw> reader_;
     std::string topic_name_;
 
     mutable std::mutex mutex_;
@@ -134,4 +135,5 @@ private:
 };
 
 } // namespace topic
-} // namespace mcom
+}  // namespace mcom
+}  // namespace moss

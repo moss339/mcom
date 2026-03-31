@@ -1,5 +1,6 @@
 #include "mcom/service/service_manager.h"
 
+namespace moss {
 namespace mcom {
 namespace service {
 
@@ -14,3 +15,5 @@ SessionId ServiceManager::generate_session_id() {
 
 }  // namespace service
 }  // namespace mcom
+
+}  // namespace moss

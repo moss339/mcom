@@ -1,8 +1,10 @@
-#include "mservice/mservice.h"
+#include "mcom/service/mservice.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
 #include <memory>
+
+using namespace moss::mcom::service;
 
 static std::vector<uint8_t> int32_to_bytes(int32_t value) {
     std::vector<uint8_t> result(4);
@@ -25,14 +27,14 @@ static int32_t bytes_to_int32(const std::vector<uint8_t>& data, size_t offset) {
 class CalculatorServer {
 public:
     CalculatorServer()
-        : server_(nullptr, 0x1234, 0x0001) {
+        : server_(std::make_shared<ServiceServer>(0x1234, 0x0001)) {
     }
 
     void init() {
     }
 
 private:
-    mservice::ServiceServer server_;
+    ServiceServerPtr server_;
 };
 
 int main() {

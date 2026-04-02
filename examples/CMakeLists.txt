@@ -8,23 +8,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Threads REQUIRED)
 
 # Set up mcom library
-set(MCOM_LIBRARY /mnt/data/workspace/moss/mcom/build/libmcom.a)
-set(MCOM_INCLUDE_DIR /mnt/data/workspace/moss/mcom/include/mcom)
-add_library(mcom STATIC IMPORTED)
+set(MCOM_LIBRARY /mnt/data/workspace/moss/mcom/build/libmcom.so)
+set(MCOM_INCLUDE_DIR /mnt/data/workspace/moss/mcom/include)
+add_library(mcom SHARED IMPORTED)
 set_target_properties(mcom PROPERTIES IMPORTED_LOCATION ${MCOM_LIBRARY})
 set_target_properties(mcom PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MCOM_INCLUDE_DIR}")
 
 # Set up mshm library
-set(MSHM_LIBRARY /mnt/data/workspace/moss/mshm/build/src/libmshm.a)
+set(MSHM_LIBRARY /mnt/data/workspace/moss/mshm/build/src/libmshm.so)
 set(MSHM_INCLUDE_DIR /mnt/data/workspace/moss/mshm/include)
-add_library(mshm STATIC IMPORTED)
+add_library(mshm SHARED IMPORTED)
 set_target_properties(mshm PROPERTIES IMPORTED_LOCATION ${MSHM_LIBRARY})
 set_target_properties(mshm PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MSHM_INCLUDE_DIR}")
 
 # Set up mdds library
-set(MDDS_LIBRARY /mnt/data/workspace/moss/mdds/build/lib/libmdds.a)
+set(MDDS_LIBRARY /mnt/data/workspace/moss/mdds/build/src/libmdds.so)
 set(MDDS_INCLUDE_DIR /mnt/data/workspace/moss/mdds/include)
-add_library(mdds STATIC IMPORTED)
+add_library(mdds SHARED IMPORTED)
 set_target_properties(mdds PROPERTIES IMPORTED_LOCATION ${MDDS_LIBRARY})
 set_target_properties(mdds PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MDDS_INCLUDE_DIR}")
 
@@ -48,6 +48,19 @@ target_include_directories(example_action_client PRIVATE
     ${MDDS_INCLUDE_DIR}
 )
 target_link_libraries(example_action_client
+    mcom
+    mshm
+    mdds
+    Threads::Threads
+)
+
+add_executable(calculator_example calculator_example.cpp)
+target_include_directories(calculator_example PRIVATE
+    ${MCOM_INCLUDE_DIR}
+    ${MSHM_INCLUDE_DIR}
+    ${MDDS_INCLUDE_DIR}
+)
+target_link_libraries(calculator_example
     mcom
     mshm
     mdds

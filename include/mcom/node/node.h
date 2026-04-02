@@ -4,22 +4,20 @@
 #include <mcom/types.h>
 #include <mcom/service/service_client.h>
 #include <mcom/service/service_server.h>
+#include <mcom/service/proto_service_client.h>
+#include <mcom/service/proto_service_server.h>
 #include <mcom/action/action_client.h>
 #include <mcom/action/action_server.h>
+#include <mcom/action/proto_action_client.h>
+#include <mcom/action/proto_action_server.h>
+#include <mcom/topic/proto_publisher.h>
+#include <mcom/topic/proto_subscriber.h>
+#include <mruntime/node.h>
 
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
-
-namespace mdds {
-class DomainParticipant;
-template<typename T>
-class Publisher;
-template<typename T>
-class Subscriber;
-struct QoSConfig;
-}  // namespace mdds
 
 namespace moss {
 namespace mcom {
@@ -45,7 +43,6 @@ public:
     const std::string& get_name() const;
     uint8_t get_domain_id() const;
 
-    // Topic creation - declarations only; implementations in node.cpp
     template<typename T>
     std::shared_ptr<moss::mdds::Publisher<T>> create_publisher(
         const std::string& topic_name,
@@ -57,19 +54,48 @@ public:
         typename moss::mdds::Subscriber<T>::DataCallback callback,
         const mdds::QoSConfig& qos);
 
-    // Service creation
+    template<typename T>
+    topic::ProtoPublisherPtr<T> create_publisher(const std::string& topic_name);
+
+    template<typename T>
+    topic::ProtoSubscriberPtr<T> create_subscriber(
+        const std::string& topic_name,
+        typename topic::ProtoSubscriber<T>::DataCallback callback);
+
     service::ServiceClientPtr create_service_client(
         service::ServiceId service_id, service::InstanceId instance_id);
 
     service::ServiceServerPtr create_service_server(
         service::ServiceId service_id, service::InstanceId instance_id);
 
-    // Action creation
+    service::ProtoServiceClientPtr create_proto_service_client(
+        const std::string& service_name, uint32_t service_id);
+
+    service::ProtoServiceServerPtr create_proto_service_server(
+        const std::string& service_name, uint32_t service_id);
+
     action::ActionClientPtr create_action_client(
         action::ActionClientConfig config);
 
     action::ActionServerPtr create_action_server(
         action::ActionServerConfig config);
+
+    template<typename TGoal>
+    action::ProtoActionClientPtr<TGoal> create_action_client(
+        const std::string& action_name,
+        uint32_t action_id);
+
+    template<typename TGoal, typename TResult>
+    action::ProtoActionServerPtr<TGoal, TResult> create_action_server(
+        const std::string& action_name,
+        uint32_t action_id);
+
+    template<typename T>
+    service::ProtoServiceClientPtr create_service_client(
+        const std::string& service_name);
+
+    void spin();
+    void spin_once();
 
 private:
     void transition_state(NodeState new_state);
@@ -78,7 +104,7 @@ private:
     NodeState state_{NodeState::UNINITIALIZED};
     mutable std::mutex state_mutex_;
 
-    std::shared_ptr<moss::mdds::DomainParticipant> participant_;
+    std::shared_ptr<mruntime::Node> runtime_node_;
 
     std::mutex endpoints_mutex_;
 };

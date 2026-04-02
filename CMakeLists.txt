@@ -9,10 +9,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find dependencies
 find_package(Threads REQUIRED)
+find_package(Protobuf REQUIRED)
 
-# Use local mshm and mdds builds directly
-set(mshm_ROOT "/mnt/data/workspace/moss/mshm" CACHE PATH "mshm root")
-set(mdds_ROOT "/mnt/data/workspace/moss/mdds" CACHE PATH "mdds root")
+# Use local builds with relative paths
+set(mshm_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../mshm" CACHE PATH "mshm root")
+set(mdds_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../mdds" CACHE PATH "mdds root")
+set(mruntime_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../mruntime" CACHE PATH "mruntime root")
+
+# Proto include path
+set(PROTO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../proto" CACHE PATH "proto root")
 
 # Import mshm library
 add_library(mshm::mshm SHARED IMPORTED)
@@ -28,11 +33,20 @@ set_target_properties(mdds::mdds PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${mdds_ROOT}/include"
 )
 
+# Import mruntime library
+add_library(mruntime::mruntime SHARED IMPORTED)
+set_target_properties(mruntime::mruntime PROPERTIES
+    IMPORTED_LOCATION "${mruntime_ROOT}/build/src/libmruntime.so"
+    INTERFACE_INCLUDE_DIRECTORIES "${mruntime_ROOT}/include"
+)
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${mshm_ROOT}/include
     ${mdds_ROOT}/include
+    ${mruntime_ROOT}/include
+    ${PROTO_ROOT}/include
 )
 
 # Source files
@@ -44,6 +58,8 @@ set(SERVICE_SOURCES
     src/service/service_client.cpp
     src/service/service_server.cpp
     src/service/service_manager.cpp
+    src/service/proto_service_client.cpp
+    src/service/proto_service_server.cpp
 )
 
 set(ACTION_SOURCES
@@ -85,6 +101,8 @@ target_link_libraries(mcom
     Threads::Threads
     mshm::mshm
     mdds::mdds
+    mruntime::mruntime
+    protobuf::libprotobuf
 )
 
 target_include_directories(mcom PUBLIC

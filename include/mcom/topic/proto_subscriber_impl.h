@@ -9,6 +9,7 @@
  */
 
 #include "mcom/topic/proto_subscriber.h"
+#include <mdds/data_reader_raw.h>
 #include <memory>
 #include <string>
 #include <deque>

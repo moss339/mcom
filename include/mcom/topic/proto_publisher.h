@@ -16,6 +16,7 @@
 #include <string>
 #include <google/protobuf/message.h>
 #include "mcom/types.h"
+#include "mcom/topic/proto_publisher_impl.h"
 
 namespace moss {
 namespace mcom {
@@ -50,7 +51,7 @@ public:
      * @brief 构造 ProtoPublisher
      * @param impl 内部实现指针（由 TopicManager 创建）
      */
-    explicit ProtoPublisher(std::shared_ptr<class ProtoPublisherImpl<T>> impl)
+    explicit ProtoPublisher(std::shared_ptr<ProtoPublisherImpl<T>> impl)
         : impl_(std::move(impl)) {
         if (impl_) {
             topic_name_ = impl_->get_topic_name();
@@ -107,7 +108,7 @@ public:
     explicit operator bool() const { return impl_ != nullptr; }
 
 private:
-    std::shared_ptr<class ProtoPublisherImpl<T>> impl_;
+    std::shared_ptr<ProtoPublisherImpl<T>> impl_;
     std::string topic_name_;
 
     static uint64_t get_current_timestamp_us();

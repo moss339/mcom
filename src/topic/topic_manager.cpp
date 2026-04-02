@@ -1,4 +1,6 @@
 #include "mcom/topic/topic_manager.h"
+#include "mcom/topic/proto_publisher_impl.h"
+#include "mcom/topic/proto_subscriber_impl.h"
 #include "mdds/domain_participant.h"
 
 namespace moss {
@@ -39,6 +41,39 @@ SubscriberPtr<T> TopicManager::create_subscriber(
     auto impl = std::make_shared<SubscriberImpl<T>>(mdds_sub);
     auto sub = std::make_shared<Subscriber<T>>(impl);
     sub->set_callback(std::move(callback));
+    return sub;
+}
+
+template<typename T>
+ProtoPublisherPtr<T> TopicManager::create_proto_publisher(const std::string& topic_name) {
+    auto participant = get_participant();
+    if (!participant) {
+        return nullptr;
+    }
+    auto writer_raw = participant->create_writer_raw(topic_name);
+    if (!writer_raw) {
+        return nullptr;
+    }
+    auto impl = std::make_shared<ProtoPublisherImpl<T>>(writer_raw, topic_name);
+    return std::make_shared<ProtoPublisher<T>>(impl);
+}
+
+template<typename T>
+ProtoSubscriberPtr<T> TopicManager::create_proto_subscriber(
+    const std::string& topic_name,
+    typename ProtoSubscriber<T>::DataCallback callback) {
+    auto participant = get_participant();
+    if (!participant) {
+        return nullptr;
+    }
+    auto reader_raw = participant->create_reader_raw(topic_name);
+    if (!reader_raw) {
+        return nullptr;
+    }
+    auto impl = std::make_shared<ProtoSubscriberImpl<T>>(reader_raw, topic_name);
+    auto sub = std::make_shared<ProtoSubscriber<T>>(impl);
+    sub->set_callback(std::move(callback));
+    sub->subscribe();
     return sub;
 }
 

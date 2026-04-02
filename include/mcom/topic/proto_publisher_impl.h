@@ -8,22 +8,17 @@
  * 2. 调用 mdds DataWriter 传输字节
  */
 
-#include "mcom/topic/proto_publisher.h"
 #include <memory>
 #include <string>
 #include <cstring>
+#include <cstdint>
+#include <functional>
 #include <google/protobuf/message.h>
+#include <mdds/data_writer_raw.h>
 
 namespace moss {
 namespace mcom {
 namespace topic {
-
-// Forward declaration
-namespace mdds {
-template<typename T> class DataWriter;
-class Transport;
-}
-class QoSConfig;
 
 namespace internal {
 
@@ -68,12 +63,12 @@ public:
 
         // 计算序列化后大小
         const int size = msg.ByteSizeLong();
-        if (size <= 0 || size > MDDS_MAX_PAYLOAD_SIZE) {
+        if (size <= 0 || size > moss::mdds::MDDS_MAX_PAYLOAD_SIZE) {
             return;
         }
 
         // 序列化到栈上 buffer（或使用 arena）
-        uint8_t buffer[MDDS_MAX_PAYLOAD_SIZE];
+        uint8_t buffer[moss::mdds::MDDS_MAX_PAYLOAD_SIZE];
         int bytes_written = 0;
         if (!internal::serialize_to_array(msg, buffer, size, &bytes_written)) {
             return;

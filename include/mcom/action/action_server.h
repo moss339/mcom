@@ -7,9 +7,13 @@
 #include <unordered_map>
 #include <mutex>
 #include <atomic>
+#include <mdds/subscriber.h>
 
 namespace moss {
 namespace mcom {
+
+class DomainParticipant;
+
 namespace action {
 
 class ActionServer : public std::enable_shared_from_this<ActionServer> {
@@ -41,6 +45,11 @@ public:
     void on_cancel_goal(uint32_t goal_id);
 
 private:
+    std::string get_goal_topic() const;
+    std::string get_cancel_topic() const;
+    std::string get_result_topic() const;
+    std::string get_feedback_topic() const;
+
     ActionServerConfig config_;
     std::atomic<bool> initialized_{false};
     std::atomic<bool> running_{false};
@@ -54,12 +63,14 @@ private:
 
     uint32_t next_goal_id_{1};
     std::mutex goal_id_mutex_;
+
+    std::shared_ptr<moss::mdds::Subscriber<ActionGoalMessage>> goal_subscriber_;
+    std::shared_ptr<moss::mdds::Subscriber<ActionCancelMessage>> cancel_subscriber_;
 };
 
 using ActionServerPtr = std::shared_ptr<ActionServer>;
 
 }  // namespace action
 }  // namespace mcom
-
 }  // namespace moss
 #endif  // MCOM_ACTION_SERVER_H

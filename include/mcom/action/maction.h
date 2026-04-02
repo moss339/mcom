@@ -5,5 +5,7 @@
 #include "goal_handle.h"
 #include "action_client.h"
 #include "action_server.h"
+#include "proto_action_client.h"
+#include "proto_action_server.h"
 
 #endif  // MCOM_ACTION_H

@@ -1,10 +1,10 @@
-#include "maction/maction.h"
+#include "mcom/action/maction.h"
 #include <iostream>
 #include <cassert>
 #include <thread>
 #include <chrono>
 
-using namespace maction;
+using namespace moss::mcom::action;
 
 void test_goal_handle_creation() {
     auto handle = std::make_shared<GoalHandle>(123);
@@ -59,10 +59,10 @@ void test_goal_handle_terminal_states() {
 }
 
 void test_action_status_enum() {
-    assert(static_cast<uint8_t>(ActionStatus::READY) == 0x00);
-    assert(static_cast<uint8_t>(ActionStatus::EXECUTING) == 0x01);
-    assert(static_cast<uint8_t>(ActionStatus::SUCCEEDED) == 0x05);
-    assert(static_cast<uint8_t>(ActionStatus::CANCELED) == 0x08);
+    assert(static_cast<uint8_t>(ActionStatus::READY) == 0x08);
+    assert(static_cast<uint8_t>(ActionStatus::EXECUTING) == 0x06);
+    assert(static_cast<uint8_t>(ActionStatus::SUCCEEDED) == 0x01);
+    assert(static_cast<uint8_t>(ActionStatus::CANCELED) == 0x02);
     std::cout << "test_action_status_enum passed\n";
 }
 

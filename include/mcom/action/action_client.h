@@ -8,9 +8,14 @@
 #include <mutex>
 #include <atomic>
 #include <thread>
+#include <functional>
+#include <mdds/subscriber.h>
 
 namespace moss {
 namespace mcom {
+
+class DomainParticipant;
+
 namespace action {
 
 class ActionClient : public std::enable_shared_from_this<ActionClient> {
@@ -45,6 +50,11 @@ public:
                      const std::vector<uint8_t>& feedback_data);
 
 private:
+    std::string get_goal_topic() const;
+    std::string get_cancel_topic() const;
+    std::string get_result_topic() const;
+    std::string get_feedback_topic() const;
+
     ActionClientConfig config_;
     std::atomic<bool> initialized_{false};
 
@@ -55,12 +65,14 @@ private:
     std::mutex feedback_mutex_;
 
     uint32_t next_goal_id_{1};
+
+    std::shared_ptr<moss::mdds::Subscriber<ActionResultMessage>> result_subscriber_;
+    std::shared_ptr<moss::mdds::Subscriber<ActionFeedbackMessage>> feedback_subscriber_;
 };
 
 using ActionClientPtr = std::shared_ptr<ActionClient>;
 
 }  // namespace action
 }  // namespace mcom
-
 }  // namespace moss
 #endif  // MCOM_ACTION_CLIENT_H

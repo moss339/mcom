@@ -17,6 +17,7 @@
 #include <functional>
 #include <google/protobuf/message.h>
 #include "mcom/types.h"
+#include "mcom/topic/proto_subscriber_impl.h"
 
 namespace moss {
 namespace mcom {
@@ -56,7 +57,7 @@ public:
      * @brief 构造 ProtoSubscriber
      * @param impl 内部实现指针（由 TopicManager 创建）
      */
-    explicit ProtoSubscriber(std::shared_ptr<class ProtoSubscriberImpl<T>> impl)
+    explicit ProtoSubscriber(std::shared_ptr<ProtoSubscriberImpl<T>> impl)
         : impl_(std::move(impl)) {
         if (impl_) {
             topic_name_ = impl_->get_topic_name();
@@ -151,7 +152,7 @@ private:
         // 如果反序列化失败，记录警告（用户可通过 has_data() 检测）
     }
 
-    std::shared_ptr<class ProtoSubscriberImpl<T>> impl_;
+    std::shared_ptr<ProtoSubscriberImpl<T>> impl_;
     std::string topic_name_;
     DataCallback callback_;
 };

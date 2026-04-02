@@ -1,11 +1,11 @@
-#include "maction/maction.h"
+#include "mcom/action/maction.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
 #include <vector>
 #include <cstring>
 
-using namespace maction;
+using namespace moss::mcom::action;
 
 std::vector<uint8_t> serialize_target(float x, float y, float z) {
     std::vector<uint8_t> data;
@@ -19,15 +19,15 @@ std::vector<uint8_t> serialize_target(float x, float y, float z) {
 int main() {
     std::cout << "MAction Client Example\n";
 
-    maction::ActionClientConfig config;
+    ActionClientConfig config;
     config.service_id = 0x5678;
     config.instance_id = 0x0001;
     config.method_id_base = 0x0001;
 
-    auto client = std::make_shared<maction::ActionClient>(nullptr, config);
+    auto client = std::make_shared<ActionClient>(config);
 
     client->subscribe_feedback(
-        [](const maction::FeedbackInfo& fb) {
+        [](const FeedbackInfo& fb) {
             std::cout << "Feedback - Goal ID: " << fb.goal_id
                       << ", Progress: " << (fb.progress * 100) << "%\n";
         });

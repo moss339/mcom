@@ -18,6 +18,10 @@ NodeStateException::NodeStateException(NodeState current, NodeState expected)
 
 Node::Node(const NodeConfig& config)
     : config_(config) {
+    logger_ = mlog::get_default_logger();
+    if (logger_) {
+        logger_->info("Node '{}' created", config.node_name);
+    }
 }
 
 Node::~Node() {
@@ -37,18 +41,28 @@ bool Node::init() {
     std::lock_guard<std::mutex> lock(state_mutex_);
 
     if (state_ != NodeState::UNINITIALIZED) {
+        if (logger_) {
+            logger_->warn("Node '{}' init failed: invalid state {}", config_.node_name,
+                         to_string(state_));
+        }
         return false;
     }
 
     runtime_node_ = mruntime::Node::create(config_.node_name, config_.domain_id);
     if (!runtime_node_ || !runtime_node_->init()) {
         runtime_node_.reset();
+        if (logger_) {
+            logger_->error("Node '{}' runtime init failed", config_.node_name);
+        }
         return false;
     }
 
     topic::TopicManager::instance().set_participant(runtime_node_->get_participant());
 
     transition_state(NodeState::INITIALIZED);
+    if (logger_) {
+        logger_->info("Node '{}' initialized (domain={})", config_.node_name, config_.domain_id);
+    }
     return true;
 }
 
@@ -56,14 +70,25 @@ bool Node::start() {
     std::lock_guard<std::mutex> lock(state_mutex_);
 
     if (state_ != NodeState::INITIALIZED) {
+        if (logger_) {
+            logger_->warn("Node '{}' start failed: invalid state {}", config_.node_name,
+                         to_string(state_));
+        }
         return false;
     }
 
     if (!runtime_node_->start()) {
+        if (logger_) {
+            logger_->error("Node '{}' runtime start failed", config_.node_name);
+        }
         return false;
     }
 
+    stop_requested_ = false;
     transition_state(NodeState::RUNNING);
+    if (logger_) {
+        logger_->info("Node '{}' started", config_.node_name);
+    }
     return true;
 }
 
@@ -74,8 +99,12 @@ void Node::stop() {
         return;
     }
 
+    stop_requested_ = true;
     runtime_node_->stop();
     transition_state(NodeState::STOPPED);
+    if (logger_) {
+        logger_->info("Node '{}' stopped", config_.node_name);
+    }
 }
 
 void Node::destroy() {
@@ -93,6 +122,9 @@ void Node::destroy() {
     runtime_node_.reset();
     topic::TopicManager::instance().set_participant(nullptr);
     transition_state(NodeState::DESTROYED);
+    if (logger_) {
+        logger_->info("Node '{}' destroyed", config_.node_name);
+    }
 }
 
 bool Node::is_running() const {
@@ -114,7 +146,16 @@ uint8_t Node::get_domain_id() const {
 }
 
 void Node::transition_state(NodeState new_state) {
+    auto old_state = state_;
     state_ = new_state;
+    log_state_transition(old_state, new_state);
+}
+
+void Node::log_state_transition(NodeState old_state, NodeState new_state) {
+    if (logger_ && old_state != new_state) {
+        logger_->debug("Node '{}' state: {} -> {}", config_.node_name,
+                      to_string(old_state), to_string(new_state));
+    }
 }
 
 service::ServiceClientPtr Node::create_service_client(
@@ -201,7 +242,12 @@ std::shared_ptr<moss::mdds::Subscriber<T>> Node::create_subscriber(
 template<typename T>
 topic::ProtoPublisherPtr<T> Node::create_publisher(const std::string& topic_name) {
     std::lock_guard<std::mutex> lock(endpoints_mutex_);
-    return topic::TopicManager::instance().create_proto_publisher<T>(topic_name);
+    auto pub = topic::TopicManager::instance().create_proto_publisher<T>(topic_name);
+    if (pub && logger_) {
+        logger_->info("Node '{}' created publisher for topic '{}' (type={})",
+                     config_.node_name, topic_name, typeid(T).name());
+    }
+    return pub;
 }
 
 template<typename T>
@@ -209,28 +255,56 @@ topic::ProtoSubscriberPtr<T> Node::create_subscriber(
     const std::string& topic_name,
     typename topic::ProtoSubscriber<T>::DataCallback callback) {
     std::lock_guard<std::mutex> lock(endpoints_mutex_);
-    return topic::TopicManager::instance().create_proto_subscriber<T>(topic_name, std::move(callback));
+    auto sub = topic::TopicManager::instance().create_proto_subscriber<T>(topic_name, std::move(callback));
+    if (sub && logger_) {
+        logger_->info("Node '{}' created subscriber for topic '{}' (type={})",
+                     config_.node_name, topic_name, typeid(T).name());
+    }
+    return sub;
 }
 
 template<typename T>
 service::ProtoServiceClientPtr Node::create_service_client(
     const std::string& service_name) {
+    (void)typeid(T);
     std::lock_guard<std::mutex> lock(endpoints_mutex_);
     auto client = std::make_shared<service::ProtoServiceClient>(service_name, 0);
     client->init();
+    if (logger_) {
+        logger_->info("Node '{}' created service client for '{}' (type={})",
+                     config_.node_name, service_name, typeid(T).name());
+    }
     return client;
 }
 
 void Node::spin() {
-    while (is_running()) {
+    if (logger_) {
+        logger_->info("Node '{}' entering spin loop", config_.node_name);
+    }
+
+    while (!stop_requested_ && is_running()) {
         spin_once();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+
+    if (logger_) {
+        logger_->info("Node '{}' exiting spin loop", config_.node_name);
     }
 }
 
 void Node::spin_once() {
     if (!is_running()) {
         return;
+    }
+    if (runtime_node_) {
+        runtime_node_->spin_once();
+    }
+}
+
+void Node::request_stop() {
+    stop_requested_ = true;
+    if (logger_) {
+        logger_->debug("Node '{}' stop requested", config_.node_name);
     }
 }
 

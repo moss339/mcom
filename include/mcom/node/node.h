@@ -13,11 +13,13 @@
 #include <mcom/topic/proto_publisher.h>
 #include <mcom/topic/proto_subscriber.h>
 #include <mruntime/node.h>
+#include <mlog/mlog.h>
 
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
+#include <atomic>
 
 namespace moss {
 namespace mcom {
@@ -97,16 +99,21 @@ public:
     void spin();
     void spin_once();
 
+    void request_stop();
+
 private:
     void transition_state(NodeState new_state);
+    void log_state_transition(NodeState old_state, NodeState new_state);
 
     NodeConfig config_;
     NodeState state_{NodeState::UNINITIALIZED};
     mutable std::mutex state_mutex_;
+    std::atomic<bool> stop_requested_{false};
 
     std::shared_ptr<mruntime::Node> runtime_node_;
 
     std::mutex endpoints_mutex_;
+    std::shared_ptr<mlog::Logger> logger_;
 };
 
 }  // namespace mcom

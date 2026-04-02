@@ -15,6 +15,7 @@ find_package(Protobuf REQUIRED)
 set(mshm_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../mshm" CACHE PATH "mshm root")
 set(mdds_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../mdds" CACHE PATH "mdds root")
 set(mruntime_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../mruntime" CACHE PATH "mruntime root")
+set(mlog_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../mlog" CACHE PATH "mlog root")
 
 # Proto include path
 set(PROTO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../proto" CACHE PATH "proto root")
@@ -40,12 +41,20 @@ set_target_properties(mruntime::mruntime PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${mruntime_ROOT}/include"
 )
 
+# Import mlog library
+add_library(mlog::mlog SHARED IMPORTED)
+set_target_properties(mlog::mlog PROPERTIES
+    IMPORTED_LOCATION "${mlog_ROOT}/build/lib/libmlog.so"
+    INTERFACE_INCLUDE_DIRECTORIES "${mlog_ROOT}/include"
+)
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${mshm_ROOT}/include
     ${mdds_ROOT}/include
     ${mruntime_ROOT}/include
+    ${mlog_ROOT}/include
     ${PROTO_ROOT}/include
 )
 
@@ -102,6 +111,7 @@ target_link_libraries(mcom
     mshm::mshm
     mdds::mdds
     mruntime::mruntime
+    mlog::mlog
     protobuf::libprotobuf
 )
 
